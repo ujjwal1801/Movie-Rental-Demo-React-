@@ -1,10 +1,19 @@
 import React, { Component } from "react";
 import { getMovies } from "../services/fakeMovieService";
 // import { deleteMovie } from "../services/fakeMovieService";
+import Like from "./like";
 
 class Movies extends Component {
   state = {
     movies: getMovies()
+  };
+
+  handleLike = movie => {
+    const movies = [...this.state.movies];
+    const index = movies.indexOf(movie);
+    // movies[index] = { ...movies[index] };
+    movies[index].liked = !movies[index].liked;
+    this.setState({ movies });
   };
 
   render() {
@@ -17,16 +26,6 @@ class Movies extends Component {
 
     return (
       <React.Fragment>
-        {/* <nav class="navbar navbar-dark primary-color">
-          <a class="navbar-brand" href="#">Link</a>
-        </nav>
-
-        <br />
-
-
-        <nav class="navbar navbar-light blue lighten-4">
-          <span class="navbar-brand">Heading</span>
-        </nav> */}
         <span>
           <h3>{this.numberOfMovies()}</h3>
         </span>
@@ -39,6 +38,7 @@ class Movies extends Component {
               <th>Stock</th>
               <th>Rate</th>
               <th />
+              <th />
             </tr>
           </thead>
           <tbody>
@@ -48,6 +48,12 @@ class Movies extends Component {
                 <td>{movie.genre.name}</td>
                 <td>{movie.numberInStock}</td>
                 <td>{movie.dailyRentalRate}</td>
+                <td>
+                  <Like
+                    liked={movie.liked}
+                    onToggle={() => this.handleLike(movie)}
+                  />
+                </td>
                 <td>
                   <button
                     onClick={() => this.deleteMovie(movie)}
@@ -73,9 +79,6 @@ class Movies extends Component {
   };
 
   deleteMovie = movie => {
-    // console.log(movie);
-    let index = this.state.movies.indexOf(movie);
-    // console.log(this.state.movies.splice(index, 1));
     this.setState({
       movies: this.state.movies.filter(m => m._id !== movie._id)
     });
